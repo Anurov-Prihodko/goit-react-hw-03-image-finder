@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PokemonDataView from './PokemonDataView';
 import PokemonErrorView from './PokemonErrorView';
 import PokemonPendingView from './PokemonPendingView';
-import pokemonAPI from '../services/pokemon-api';
+import pokemonAPI from '../services/api';
 
 const Status = {
   IDLE: 'idle',
@@ -14,8 +14,6 @@ const Status = {
 export default class PokemonInfo extends Component {
   state = {
     pokemon: null,
-    error: false,
-    status: Status.IDLE,
   };
 
   componentDidUpdate(prevProps, prevState) {
