@@ -1,5 +1,3 @@
-// === ИНПУТ ===
-
 import { Component } from 'react';
 import { ImSearch } from 'react-icons/im';
 import { toast } from 'react-toastify';
@@ -37,6 +35,7 @@ export default class Searchbar extends Component {
               Search
             </span>
           </button>
+
           <input
             className="SearchForm-input"
             type="text"

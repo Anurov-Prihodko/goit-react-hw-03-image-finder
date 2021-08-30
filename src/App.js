@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 // import PokemonInfo from './components/PokemonInfo';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
-import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
+// import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
 
 // import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
 
@@ -35,13 +35,26 @@ class App extends Component {
   //     .catch(error => this.setState({ error, status: Status.REJECTED }));
   // };
 
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.requestName !== this.state.requestName) {
+  //     console.log('Изменилось имя покемона');
+  //     console.log('prevProps:', prevState.requestName);
+  //     console.log('this.props.requestName:', this.state.requestName);
+
+  //     fetchImages(this.state.requestName)
+  //       .then(response => response.hits)
+  //       .then(console.log);
+  //     // .finally(() => this.setState({ loading: false }));
+  //   }
+  // }
+
   handleFormSubmit = requestName => {
     this.setState({ requestName });
     this.setState({ loading: true });
-    fetchImages(requestName)
-      .then(response => response.hits)
-      .then(image => this.setState({ image }))
-      .finally(() => this.setState({ loading: false }));
+    // fetchImages(requestName)
+    //   .then(response => response.hits)
+    //   .then(image => this.setState({ image }))
+    //   .finally(() => this.setState({ loading: false }));
   };
 
   render() {
@@ -52,11 +65,11 @@ class App extends Component {
         {this.state.loading && <h2>Loading...</h2>}
         {this.state.image && (
           <img
-            src={this.state.image[0].webformatURL}
-            alt={this.state.image[0].tags}
+            src={this.state.image[3].webformatURL}
+            alt={this.state.image[3].tags}
           />
         )}
-        {console.log(this.state.image)}
+        <ImageGallery requestName={this.state.requestName} />
         {/* <PokemonForm onSubmit={this.handleFormSubmit} />
         <PokemonInfo pokemonName={this.state.pokemonName} /> */}
         <ToastContainer autoClose={3500} />
