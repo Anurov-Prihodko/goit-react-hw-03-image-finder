@@ -30,7 +30,6 @@ export default function Loader({ imgName }) {
         <ImSpinner size="32" className="icon-spin" />
         Loading...
       </div>
-      <ImageGalleryItem image={image} />
     </div>
   );
 }

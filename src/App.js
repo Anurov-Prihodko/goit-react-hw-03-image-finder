@@ -1,12 +1,12 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import shortid from 'shortid';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
 import Button from './components/Button';
-
-// import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
 
 const Status = {
   IDLE: 'idle',
@@ -18,59 +18,101 @@ const Status = {
 class App extends Component {
   state = {
     requestName: '',
-    // imgArray: [],
+    imgArray: [],
     numPage: 1,
     loading: false,
+    isMoreAvailable: false,
     // image: null,
-    // // error: false,
-    // status: Status.IDLE,
+    error: null,
+    status: Status.IDLE,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { requestName } = this.state;
+    const { requestName, numPage } = this.state;
 
     if (prevState.requestName !== requestName) {
-      // console.log('Изменилось имя покемона');
-      // console.log('prevProps:', prevState.requestName);
-      // console.log('this.props.requestName:', this.state.requestName);
-      this.setState({ loading: true });
-      fetchImages(requestName)
-        .then(response => response.hits)
-        .then(images => this.setState({ images }))
-        .finally(() => this.setState({ loading: false }));
+      this.imageApiService(requestName, numPage);
     }
   }
 
+  imageApiService = () => {
+    const { requestName, numPage } = this.state;
+    this.setState({ loading: true });
+
+    fetchImages(requestName, numPage)
+      .then(response => {
+        if (response.hits.length === 0) {
+          this.setState({ error: true, status: Status.REJECTED });
+          toast.error('Something went wrong! Please enter a correct request.');
+          return;
+        }
+
+        const isMoreAvailable = this.checkAvailability(response.hits.length);
+
+        this.setState({
+          imgArray: [...this.state.imgArray, ...response.hits],
+          isMoreAvailable,
+          status: Status.RESOLVED,
+        });
+
+        // if (response.hits.length < 12) {
+        //   this.setState({ status: Status.IDLE });
+        //   toast.info('No more photos for your request');
+        //   return response.hits;
+        // }
+
+        toast.success('Congratulations! You found your photo.', {
+          icon: '🚀',
+        });
+        // return response.hits;
+      })
+      .then(
+        () => {
+          if (numPage !== 1) {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+        },
+        // images => this.setState({ images }),
+        // this.setState({ status: Status.RESOLVED }),
+      )
+      .catch(error => this.setState({ error, status: Status.REJECTED }))
+      .finally(() => this.setState({ loading: false }));
+  };
+
   handleFormSubmit = requestName => {
-    this.setState({ requestName });
-    // this.setState({ loading: true });
-    // fetchImages(requestName)
-    //   .then(response => response.hits)
-    //   .then(image => this.setState({ image }))
-    //   .finally(() => this.setState({ loading: false }));
+    this.setState({ requestName, imgArray: [], numPage: 1 });
   };
 
   handleLoadMore = () => {
+    this.imageApiService();
     this.setState(() => ({ numPage: this.state.numPage + 1 }));
   };
 
+  // ===
+  checkAvailability = itemsLength => {
+    return !(itemsLength < NUMBER_OF_PHOTOS);
+  };
+
   render() {
-    const { loading, images, requestName } = this.state;
+    const { loading, imgArray, requestName, status } = this.state;
 
     return (
       <div className="Container">
         <Searchbar onSubmit={this.handleFormSubmit} />
-        {/* <ImageGallery images={this.state.image} /> */}
-        {loading && <h2>Loading...</h2>}
-        {/* {images &&
-          images.map(({ webformatURL, tags, id }) => (
-            <img key={id} src={webformatURL} width="300" alt={tags} />
-          ))} */}
-        <ImageGallery images={images} />
-        {!requestName && <h2>Enter your request</h2>}
-        {/* <PokemonForm onSubmit={this.handleFormSubmit} />
-        <PokemonInfo pokemonName={this.state.pokemonName} /> */}
-        <Button onClick={this.handleLoadMore}>Load more</Button>
+
+        {loading && <h2 className="EnterYourRequest">Loading...</h2>}
+
+        <ImageGallery images={imgArray} />
+        {!requestName && (
+          <h2 className="EnterYourRequest">Enter your request</h2>
+        )}
+
+        {status === Status.RESOLVED && !loading && (
+          <Button onClick={this.handleLoadMore}>Load more</Button>
+        )}
         <ToastContainer autoClose={3500} />
       </div>
     );
@@ -78,3 +120,21 @@ class App extends Component {
 }
 
 export default App;
+
+// API.fetchImages()
+//   .then((hits) => {
+//     if (hits.length === 0) {
+//     refs.loadMoreImgBtn.style.display = 'none'
+//     NOTE.onFetchError()
+//   } else if (hits.length < 12) {
+//     const markup = imageCard(hits)
+//     renderImages(markup)
+//     refs.loadMoreImgBtn.style.display = 'none'
+//     NOTE.noMoreImgRequestAlert()
+//   } else if (value) {
+//     const markup = imageCard(hits)
+//     renderImages(markup)
+//     NOTE.onSuccessfulRequest()
+
+//   }
+// })

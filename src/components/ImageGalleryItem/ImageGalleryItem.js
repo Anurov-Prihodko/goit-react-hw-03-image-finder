@@ -27,7 +27,7 @@ export default class ImageGalleryItem extends Component {
       <>
         {images.map(({ webformatURL, tags, id }, index) => (
           <li
-            key={id}
+            key={index}
             className={s.item}
             onClick={() => this.handleClick(index)}
           >

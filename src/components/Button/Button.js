@@ -12,8 +12,3 @@ export default function Button(props) {
 Button.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
-
-// window.scrollTo({
-//   top: document.documentElement.scrollHeight,
-//   behavior: 'smooth',
-// });
