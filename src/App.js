@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import Searchbar from './components/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
+import Button from './components/Button';
 
 // import { fetchImages, NUMBER_OF_PHOTOS } from './services/api';
 
@@ -18,7 +19,7 @@ class App extends Component {
   state = {
     requestName: '',
     // imgArray: [],
-    // numPage: 1,
+    numPage: 1,
     loading: false,
     // image: null,
     // // error: false,
@@ -49,11 +50,15 @@ class App extends Component {
     //   .finally(() => this.setState({ loading: false }));
   };
 
+  handleLoadMore = () => {
+    this.setState(() => ({ numPage: this.state.numPage + 1 }));
+  };
+
   render() {
     const { loading, images, requestName } = this.state;
 
     return (
-      <>
+      <div className="Container">
         <Searchbar onSubmit={this.handleFormSubmit} />
         {/* <ImageGallery images={this.state.image} /> */}
         {loading && <h2>Loading...</h2>}
@@ -61,13 +66,13 @@ class App extends Component {
           images.map(({ webformatURL, tags, id }) => (
             <img key={id} src={webformatURL} width="300" alt={tags} />
           ))} */}
-
         <ImageGallery images={images} />
         {!requestName && <h2>Enter your request</h2>}
         {/* <PokemonForm onSubmit={this.handleFormSubmit} />
         <PokemonInfo pokemonName={this.state.pokemonName} /> */}
+        <Button onClick={this.handleLoadMore}>Load more</Button>
         <ToastContainer autoClose={3500} />
-      </>
+      </div>
     );
   }
 }
