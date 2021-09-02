@@ -54,6 +54,7 @@ class App extends Component {
         this.setState({
           imgArray: [...this.state.imgArray, ...response.hits],
           status: Status.RESOLVED,
+          numPage: this.state.numPage + 1,
         });
 
         if (response.hits.length < NUMBER_OF_PHOTOS) {
@@ -61,18 +62,25 @@ class App extends Component {
           toast.info('No more photos for your request');
         }
 
-        toast.success('Congratulations! You found your photo.', {
-          icon: '🚀',
-        });
-      })
-      .then(() => {
         if (numPage !== 1) {
           window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: 'smooth',
           });
         }
+
+        toast.success('Congratulations! You found your photo.', {
+          icon: '🚀',
+        });
       })
+      // .then(() => {
+      //   if (numPage !== 1) {
+      //     window.scrollTo({
+      //       top: document.documentElement.scrollHeight,
+      //       behavior: 'smooth',
+      //     });
+      //   }
+      // })
       .catch(error => this.setState({ error, status: Status.REJECTED }));
     // .finally(() => this.setState({ status: Status.IDLE }));
   };
@@ -87,11 +95,13 @@ class App extends Component {
   };
 
   handleLoadMore = () => {
-    this.imageApiService();
+    const { requestName, numPage } = this.state;
+
     this.setState(() => ({
       numPage: this.state.numPage + 1,
       loading: true,
     }));
+    this.imageApiService(requestName, numPage);
   };
 
   render() {
