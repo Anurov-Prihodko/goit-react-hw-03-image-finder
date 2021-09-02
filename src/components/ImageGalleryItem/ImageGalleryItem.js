@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import shortid from 'shortid';
 import s from './ImageGalleryItem.module.css';
 import Modal from '../Modal';
 
@@ -25,9 +26,9 @@ export default class ImageGalleryItem extends Component {
 
     return (
       <>
-        {images.map(({ webformatURL, tags, id }, index) => (
+        {images.map(({ webformatURL, tags }, index) => (
           <li
-            key={index}
+            key={shortid.generate()}
             className={s.item}
             onClick={() => this.handleClick(index)}
           >
